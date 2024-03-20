@@ -151,7 +151,8 @@ async def restart_all_cloned_bots():
             logging.info(f"Bot @{ai.username} restarted.")
         except Exception as e:
             logging.exception(f"Error while restarting bot with token {bot_token}: {e}")
+            await restart_all_cloned_bots()
 
 # Call this function after deployment or restart to restart all cloned bots
-await restart_all_cloned_bots()
+
 
