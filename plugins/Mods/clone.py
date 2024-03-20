@@ -29,7 +29,7 @@ async def on_clone(self, message):
         bot_id = re.findall(r'\d[0-9]{8,10}', message.text)
 
         if not str(message.forward_from.id) != "93372553":
-            msg = await message.reply_text(f" <code>{bot_token}</code>\n\n ♻️𝙰𝚖 𝚃𝚛𝚢𝚒𝚗𝚐 𝚃𝚘 𝙲𝚕𝚘𝚗𝚎 𝚄𝚛 𝙱𝚘𝚝 𝚆𝚊𝚒𝚝 𝙰 𝙼𝚒𝚗𝚞𝚝𝚎♻️")
+            msg = await message.reply_text(f" <code>{bot_token}</code>\n\n ♻️𝙰𝚖 𝚃𝚛𝚢𝚒𝚗𝚐 𝚃𝚘 𝙲𝚕𝚘𝚗𝚎 𝚄𝚛 𝙱𝚘𝚝 𝚆𝚊𝚒𝚝 𝙰 𝙼𝚒𝚗𝚞𝚝𝚎♻️ bhi")
             try:
                 ai = Client(
                     f"{bot_token}", API_ID, API_HASH,
@@ -135,3 +135,23 @@ async def delete_cloned_bot(client, message):
     except Exception as e:
         logging.exception("Error while deleting cloned bot.")
         await message.reply_text("An error occurred while deleting the cloned bot.")
+
+async def restart_all_cloned_bots():
+    logging.info("Restarting all cloned bots........")
+    cloned_bots = mongo_db.bots.find()
+    for bot_data in cloned_bots:
+        bot_token = bot_data['token']
+        try:
+            ai = Client(
+                f"{bot_token}", API_ID, API_HASH,
+                bot_token=bot_token,
+                plugins={"root": "clone_plugins"},
+            )
+            await ai.start()
+            logging.info(f"Bot @{ai.username} restarted.")
+        except Exception as e:
+            logging.exception(f"Error while restarting bot with token {bot_token}: {e}")
+
+# Call this function after deployment or restart to restart all cloned bots
+await restart_all_cloned_bots()
+
